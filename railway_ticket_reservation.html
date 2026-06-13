@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Railway Ticket Reservation System</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--rail:#1a2744;--rail2:#243360;--accent:#f5a623;--accent2:#e8931a;--light:#f0f4ff;--green:#1a7a4a;--red:#c0392b;--text:#1a2744;--muted:#607090}
+    body{font-family:'Nunito',sans-serif;background:var(--light);color:var(--text);min-height:100vh}
+    header{background:linear-gradient(135deg,var(--rail),var(--rail2));position:relative;overflow:hidden}
+    .header-track{height:4px;background:repeating-linear-gradient(90deg,var(--accent) 0,var(--accent) 20px,transparent 20px,transparent 30px)}
+    .header-inner{display:flex;align-items:center;gap:16px;padding:18px 28px;flex-wrap:wrap}
+    .logo{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:#fff;letter-spacing:1px;display:flex;align-items:center;gap:10px}
+    .logo span{background:var(--accent);color:var(--rail);padding:2px 10px;border-radius:4px}
+    nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+    nav button{font-family:'Nunito',sans-serif;background:transparent;border:1.5px solid rgba(255,255,255,0.25);color:#fff;padding:8px 18px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+    nav button:hover,nav button.active{background:var(--accent);border-color:var(--accent);color:var(--rail)}
+    .section{display:none;padding:28px;max-width:900px;margin:0 auto}
+    .section.active{display:block}
+    h2{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--rail);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+    h2 i{font-size:22px;color:var(--accent2)}
+    .card{background:#fff;border-radius:12px;border:1px solid #d6dff5;padding:22px;margin-bottom:18px;box-shadow:0 2px 8px rgba(26,39,68,0.06)}
+    label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+    input,select{width:100%;padding:10px 14px;border:1.5px solid #d0d8ef;border-radius:8px;font-family:'Nunito',sans-serif;font-size:15px;color:var(--text);background:#fff;margin-bottom:16px;transition:border .2s}
+    input:focus,select:focus{outline:none;border-color:var(--rail2)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:600px){.row,.row3{grid-template-columns:1fr}}
+    .btn{font-family:'Nunito',sans-serif;padding:11px 28px;border-radius:8px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+    .btn-primary{background:var(--rail);color:#fff}
+    .btn-primary:hover{background:var(--rail2);transform:translateY(-1px)}
+    .btn-danger{background:var(--red);color:#fff}
+    .btn-danger:hover{background:#a93226}
+    .ticket{background:#fff;border-radius:12px;border:1px solid #d6dff5;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 8px rgba(26,39,68,0.06)}
+    .ticket-top{background:var(--rail);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+    .ticket-id{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;opacity:.7;letter-spacing:1px}
+    .ticket-train{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:.5px}
+    .ticket-body{padding:16px 20px;display:grid;grid-template-columns:1fr auto 1fr auto auto;gap:10px;align-items:center}
+    @media(max-width:600px){.ticket-body{grid-template-columns:1fr 1fr}}
+    .ticket-station{text-align:center}
+    .ticket-station .code{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--rail)}
+    .ticket-station .name{font-size:12px;color:var(--muted);font-weight:600}
+    .ticket-arrow{font-size:20px;color:var(--accent2)}
+    .ticket-info{font-size:13px;color:var(--muted);line-height:1.7}
+    .ticket-info strong{color:var(--text);font-weight:600;display:block}
+    .badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700}
+    .badge-green{background:#d4f5e2;color:#0f5c2e}
+    .badge-red{background:#fde8e8;color:#8b1a1a}
+    .divider{border:none;border-top:1.5px dashed #d0d8ef;margin:0 20px}
+    .empty{text-align:center;padding:50px 20px;color:var(--muted)}
+    .empty i{font-size:48px;opacity:.3;display:block;margin-bottom:12px}
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:14px;font-weight:600}
+    .alert-success{background:#d4f5e2;color:#0f5c2e;border:1px solid #a3dfc0}
+    .alert-error{background:#fde8e8;color:#8b1a1a;border:1px solid #f5b8b8}
+    .cancel-input{display:flex;gap:10px;margin-bottom:20px}
+    .cancel-input input{margin-bottom:0}
+    .price-tag{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--green)}
+    footer{text-align:center;padding:24px;font-size:13px;color:var(--muted);border-top:1px solid #d6dff5;margin-top:20px}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-track"></div>
+  <div class="header-inner">
+    <div class="logo">🚂 <span>RAILBOOK</span> Ticket Reservation System</div>
+    <nav>
+      <button class="active" onclick="showSection('book')"><i class="ti ti-ticket"></i> Book Ticket</button>
+      <button onclick="showSection('display')"><i class="ti ti-list"></i> Display Tickets</button>
+      <button onclick="showSection('cancel')"><i class="ti ti-x"></i> Cancel Ticket</button>
+      <button onclick="exitApp()" style="border-color:rgba(255,100,100,0.5);color:#ffaaaa"><i class="ti ti-power"></i> Exit</button>
+    </nav>
+  </div>
+</header>
+
+<!-- BOOK TICKET -->
+<div id="sec-book" class="section active">
+  <h2><i class="ti ti-ticket"></i> Book a New Ticket</h2>
+  <div class="card">
+    <div id="book-alert"></div>
+    <div class="row">
+      <div>
+        <label>Passenger Name</label>
+        <input type="text" id="name" placeholder="Enter full name">
+      </div>
+      <div>
+        <label>Age</label>
+        <input type="number" id="age" placeholder="Age" min="1" max="120">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>From Station</label>
+        <select id="from">
+          <option value="">Select departure station</option>
+          <option>New Delhi</option><option>Mumbai Central</option><option>Chennai Central</option>
+          <option>Kolkata</option><option>Bangalore</option><option>Hyderabad</option>
+          <option>Pune</option><option>Ahmedabad</option><option>Jaipur</option><option>Lucknow</option>
+        </select>
+      </div>
+      <div>
+        <label>To Station</label>
+        <select id="to">
+          <option value="">Select destination station</option>
+          <option>New Delhi</option><option>Mumbai Central</option><option>Chennai Central</option>
+          <option>Kolkata</option><option>Bangalore</option><option>Hyderabad</option>
+          <option>Pune</option><option>Ahmedabad</option><option>Jaipur</option><option>Lucknow</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Train</label>
+        <select id="train">
+          <option value="">Select train</option>
+          <option value="Rajdhani Express|RAJ">Rajdhani Express</option>
+          <option value="Shatabdi Express|SHT">Shatabdi Express</option>
+          <option value="Duronto Express|DUR">Duronto Express</option>
+          <option value="Vande Bharat|VBT">Vande Bharat</option>
+          <option value="Garib Rath|GRT">Garib Rath</option>
+        </select>
+      </div>
+      <div>
+        <label>Date of Journey</label>
+        <input type="date" id="date">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Travel Class</label>
+        <select id="cls">
+          <option value="">Select class</option>
+          <option value="1AC|2200">1st AC (1AC) — ₹2200</option>
+          <option value="2AC|1400">2nd AC (2AC) — ₹1400</option>
+          <option value="3AC|900">3rd AC (3AC) — ₹900</option>
+          <option value="SL|450">Sleeper (SL) — ₹450</option>
+          <option value="GEN|150">General (GEN) — ₹150</option>
+        </select>
+      </div>
+      <div>
+        <label>Seat Preference</label>
+        <select id="seat">
+          <option value="No Preference">No Preference</option>
+          <option value="Lower Berth">Lower Berth</option>
+          <option value="Middle Berth">Middle Berth</option>
+          <option value="Upper Berth">Upper Berth</option>
+          <option value="Window Seat">Window Seat</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;flex-wrap:wrap;gap:12px">
+      <div id="price-display" style="font-size:14px;color:var(--muted)">Select class to see fare</div>
+      <button class="btn btn-primary" onclick="bookTicket()"><i class="ti ti-plus"></i> Confirm Booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- DISPLAY TICKETS -->
+<div id="sec-display" class="section">
+  <h2><i class="ti ti-list"></i> All Booked Tickets</h2>
+  <div id="tickets-container"></div>
+</div>
+
+<!-- CANCEL TICKET -->
+<div id="sec-cancel" class="section">
+  <h2><i class="ti ti-x"></i> Cancel a Ticket</h2>
+  <div class="card">
+    <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Enter your PNR number to search and cancel a ticket. A 10% cancellation charge applies.</p>
+    <div class="cancel-input">
+      <input type="text" id="cancel-pnr" placeholder="Enter PNR number (e.g. PNR2024001)" style="margin:0">
+      <button class="btn btn-primary" onclick="findTicket()"><i class="ti ti-search"></i> Find</button>
+    </div>
+    <div id="cancel-result"></div>
+  </div>
+</div>
+
+<footer>Railway Ticket Reservation System &mdash; Mini Project &copy; 2026 by Sawan Kumar</footer>
+
+<script>
+  let tickets = JSON.parse(localStorage.getItem('railbook_tickets') || '[]');
+  let pnrCounter = parseInt(localStorage.getItem('railbook_pnr') || '1');
+
+  function save() {
+    localStorage.setItem('railbook_tickets', JSON.stringify(tickets));
+    localStorage.setItem('railbook_pnr', pnrCounter);
+  }
+
+  function showSection(s) {
+    document.querySelectorAll('.section').forEach(e => e.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(e => e.classList.remove('active'));
+    document.getElementById('sec-' + s).classList.add('active');
+    const idx = ['book','display','cancel'].indexOf(s);
+    if(idx >= 0) document.querySelectorAll('nav button')[idx].classList.add('active');
+    if (s === 'display') renderTickets();
+  }
+
+  document.getElementById('cls').addEventListener('change', function () {
+    const val = this.value;
+    const pd = document.getElementById('price-display');
+    if (val) {
+      const price = val.split('|')[1];
+      pd.innerHTML = `<span class="price-tag">&#8377;${price}</span> <span style="color:var(--muted);font-size:13px">base fare per person</span>`;
+    } else {
+      pd.textContent = 'Select class to see fare';
+    }
+  });
+
+  function bookTicket() {
+    const name = document.getElementById('name').value.trim();
+    const age  = document.getElementById('age').value;
+    const from = document.getElementById('from').value;
+    const to   = document.getElementById('to').value;
+    const train = document.getElementById('train').value;
+    const date  = document.getElementById('date').value;
+    const cls   = document.getElementById('cls').value;
+    const seat  = document.getElementById('seat').value;
+    const alertEl = document.getElementById('book-alert');
+
+    if (!name || !age || !from || !to || !train || !date || !cls) {
+      alertEl.innerHTML = '<div class="alert alert-error">&#9888;&#65039; Please fill in all fields before booking.</div>';
+      return;
+    }
+    if (from === to) {
+      alertEl.innerHTML = '<div class="alert alert-error">&#9888;&#65039; Departure and destination cannot be the same station.</div>';
+      return;
+    }
+
+    const [trainName, trainCode] = train.split('|');
+    const [clsName, price] = cls.split('|');
+    const pnr = 'PNR' + String(2024000 + pnrCounter).slice(-7);
+    const seatNo = trainCode + Math.floor(Math.random() * 60 + 1) + '/' + clsName;
+
+    tickets.push({
+      pnr, name, age: parseInt(age), from, to, trainName, trainCode,
+      clsName, price: parseInt(price), date, seat, seatNo,
+      status: 'Active', booked: new Date().toLocaleDateString('en-IN')
+    });
+    pnrCounter++;
+    save();
+
+    alertEl.innerHTML = `<div class="alert alert-success">&#10003; Ticket booked successfully! Your PNR is <strong>${pnr}</strong>. Allocated Seat: <strong>${seatNo}</strong></div>`;
+    ['name','age','from','to','train','date','cls'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('seat').value = 'No Preference';
+    document.getElementById('price-display').textContent = 'Select class to see fare';
+  }
+
+  function stationCode(name) {
+    const map = {
+      'New Delhi':'NDLS','Mumbai Central':'BCT','Chennai Central':'MAS',
+      'Kolkata':'HWH','Bangalore':'SBC','Hyderabad':'HYB',
+      'Pune':'PUNE','Ahmedabad':'ADI','Jaipur':'JP','Lucknow':'LKO'
+    };
+    return map[name] || name.substring(0, 3).toUpperCase();
+  }
+
+  function renderTickets() {
+    const c = document.getElementById('tickets-container');
+    const active = tickets.filter(t => t.status === 'Active');
+    const cancelled = tickets.filter(t => t.status === 'Cancelled');
+
+    if (!tickets.length) {
+      c.innerHTML = `<div class="empty"><i class="ti ti-ticket"></i><p style="font-size:18px;font-weight:600">No tickets booked yet</p><p style="font-size:14px;margin-top:6px">Click "Book Ticket" to make your first reservation.</p></div>`;
+      return;
+    }
+
+    let html = '';
+    if (active.length) {
+      html += `<div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Active Tickets (${active.length})</div>`;
+      active.forEach(t => html += renderTicketCard(t));
+    }
+    if (cancelled.length) {
+      html += `<div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:var(--muted);margin:20px 0 10px;text-transform:uppercase;letter-spacing:1px">Cancelled Tickets (${cancelled.length})</div>`;
+      cancelled.forEach(t => html += renderTicketCard(t));
+    }
+    c.innerHTML = html;
+  }
+
+  function renderTicketCard(t) {
+    const isCancelled = t.status === 'Cancelled';
+    return `<div class="ticket">
+      <div class="ticket-top">
+        <div>
+          <div class="ticket-id">PNR: ${t.pnr}</div>
+          <div class="ticket-train">&#128642; ${t.trainName}</div>
+        </div>
+        <span class="badge ${isCancelled ? 'badge-red' : 'badge-green'}">${t.status}</span>
+      </div>
+      <div class="ticket-body">
+        <div class="ticket-station">
+          <div class="code">${stationCode(t.from)}</div>
+          <div class="name">${t.from}</div>
+        </div>
+        <div class="ticket-arrow">&#8594;</div>
+        <div class="ticket-station">
+          <div class="code">${stationCode(t.to)}</div>
+          <div class="name">${t.to}</div>
+        </div>
+        <div class="ticket-info">
+          <strong>${t.name}</strong>
+          Age: ${t.age} | ${t.clsName}<br>
+          Seat: ${t.seatNo} | ${t.seat}
+        </div>
+        <div class="ticket-info">
+          <strong>${t.date}</strong>
+          Booked: ${t.booked}<br>
+          <span class="price-tag" style="font-size:16px">&#8377;${t.price}</span>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function findTicket() {
+    const pnr = document.getElementById('cancel-pnr').value.trim().toUpperCase();
+    const res = document.getElementById('cancel-result');
+
+    if (!pnr) { res.innerHTML = '<div class="alert alert-error">Please enter a PNR number.</div>'; return; }
+    const t = tickets.find(x => x.pnr === pnr);
+    if (!t) { res.innerHTML = `<div class="alert alert-error">&#10060; No ticket found with PNR <strong>${pnr}</strong>. Please check and try again.</div>`; return; }
+    if (t.status === 'Cancelled') { res.innerHTML = '<div class="alert alert-error">This ticket has already been cancelled.</div>'; return; }
+
+    const refund = Math.round(t.price * 0.9);
+    res.innerHTML = `<div class="ticket" style="margin-top:10px">
+      <div class="ticket-top">
+        <div><div class="ticket-id">PNR: ${t.pnr}</div><div class="ticket-train">&#128642; ${t.trainName}</div></div>
+        <span class="badge badge-green">Active</span>
+      </div>
+      <div class="ticket-body">
+        <div class="ticket-station"><div class="code">${stationCode(t.from)}</div><div class="name">${t.from}</div></div>
+        <div class="ticket-arrow">&#8594;</div>
+        <div class="ticket-station"><div class="code">${stationCode(t.to)}</div><div class="name">${t.to}</div></div>
+        <div class="ticket-info"><strong>${t.name}</strong>Age: ${t.age} | ${t.clsName}</div>
+        <div class="ticket-info"><strong>${t.date}</strong>Fare: &#8377;${t.price}</div>
+      </div>
+      <hr class="divider">
+      <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div style="font-size:14px;color:var(--muted)">
+          Refund after 10% cancellation fee: <strong style="color:var(--green);font-size:16px">&#8377;${refund}</strong>
+        </div>
+        <button class="btn btn-danger" onclick="confirmCancel('${t.pnr}')">
+          <i class="ti ti-trash"></i> Cancel This Ticket
+        </button>
+      </div>
+    </div>`;
+  }
+
+  function confirmCancel(pnr) {
+    const t = tickets.find(x => x.pnr === pnr);
+    if (!t) return;
+    t.status = 'Cancelled';
+    save();
+    const refund = Math.round(t.price * 0.9);
+    document.getElementById('cancel-result').innerHTML = `<div class="alert alert-success">&#10003; Ticket <strong>${pnr}</strong> cancelled successfully. Refund of <strong>&#8377;${refund}</strong> will be processed within 5–7 business days.</div>`;
+    document.getElementById('cancel-pnr').value = '';
+  }
+
+  function exitApp() {
+    if (confirm('Are you sure you want to exit the Railway Reservation System?')) {
+      document.body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:Nunito,sans-serif;color:#1a2744;background:#f0f4ff">
+        <div style="font-size:60px">🚂</div>
+        <h1 style="font-family:Rajdhani,sans-serif;font-size:32px;margin:12px 0 8px">Thank you for using RailBook!</h1>
+        <p style="color:#607090">Your session has ended. Close the tab or <a href="" style="color:#1a2744;font-weight:700">click here</a> to restart.</p>
+      </div>`;
+    }
+  }
+
+  document.getElementById('date').min = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
